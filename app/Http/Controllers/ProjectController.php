@@ -34,8 +34,13 @@ class ProjectController extends Controller
 
     public function create()
     {
+        $users = User::select('id', 'name')
+            ->whereDoesntHave('roles', function ($query) {
+                $query->where('name', 'Admin');
+            })
+            ->get();
         return Inertia::render('Projects/Create', [
-            'users' => User::select('id', 'name')->get(),
+            'users' => $users,
         ]);
     }
 
@@ -77,7 +82,12 @@ class ProjectController extends Controller
     public function editMembers(Project $project)
     {
         $members = $project->users;
-        $allUsers = User::all();
+        $allUsers = User::select('id', 'name')
+            ->whereDoesntHave('roles', function ($query) {
+                $query->where('name', 'Admin');
+            })
+            ->get();
+        
 
         return Inertia::render('Projects/EditMembers', [
             'project' => $project,

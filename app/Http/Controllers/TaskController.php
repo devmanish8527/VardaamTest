@@ -49,21 +49,30 @@ class TaskController extends Controller
             ->latest()
             ->get();
 
-
+        $users = User::select('id', 'name')
+            ->whereDoesntHave('roles', function ($query) {
+                $query->where('name', 'Admin');
+            })
+            ->get();
         return Inertia::render('Tasks/Index', [
             'tasks' => $tasks,
             'filters' => $filters,
             'projects' => Project::select('id', 'name')->get(),
-            'users' => User::select('id', 'name')->get(),
+            'users' => $users //User::select('id', 'name')->get(),
         ]);
     }
 
 
     public function create()
     {
+        $users = User::select('id', 'name')
+            ->whereDoesntHave('roles', function ($query) {
+                $query->where('name', 'Admin');
+            })
+            ->get();
         return Inertia::render('Tasks/Create', [
             'projects' => Project::select('id', 'name')->get(),
-            'users' => User::select('id', 'name')->get(),
+            'users' => $users, //User::select('id', 'name')->get(),
             'tasks' => Task::select('id', 'title')->get(),
         ]);
     }
@@ -84,7 +93,11 @@ class TaskController extends Controller
     public function edit($id)
     {
         $task = $this->taskService->find($id);
-        $users = User::all();
+        $users = User::select('id', 'name')
+            ->whereDoesntHave('roles', function ($query) {
+                $query->where('name', 'Admin');
+            })
+            ->get();
 
         return Inertia::render('Tasks/Edit', [
             'task' => $task,
