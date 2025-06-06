@@ -22,15 +22,22 @@ class ProjectController extends Controller
 
     public function index()
     {
-        $projects = $this->projectRepository->getProjectsForUser(auth()->id());
+        $user = auth()->user();
+
+        if ($user->roles()->where('name', 'admin')->exists()) {
+            $projects = $this->projectRepository->getAllProjects();
+        } else {
+            $projects = $this->projectRepository->getProjectsForUser($user->id);
+        }
 
         return Inertia::render('Projects/Index', [
             'projects' => $projects,
             'auth' => [
-                'user' => auth()->user(),
+                'user' => $user,
             ],
         ]);
     }
+
 
     public function create()
     {
@@ -87,7 +94,7 @@ class ProjectController extends Controller
                 $query->where('name', 'Admin');
             })
             ->get();
-        
+
 
         return Inertia::render('Projects/EditMembers', [
             'project' => $project,

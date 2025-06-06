@@ -44,4 +44,9 @@ class ProjectRepository implements ProjectRepositoryInterface
             $project->users()->syncWithoutDetaching($validUserIds);
         }
     }
+    public function getAllProjects()
+    {
+        
+        return Project::with(['users', 'tasks'])->get();
+    }
 }

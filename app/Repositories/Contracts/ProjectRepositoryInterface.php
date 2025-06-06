@@ -10,4 +10,5 @@ interface ProjectRepositoryInterface
     public function create(array $data): Project;
     public function updateTeam(Project $project, array $userIds): void;
     public function updateTeamMembers($projectId, array $userIds, string $action): void;
+    public function getAllProjects();
 }
